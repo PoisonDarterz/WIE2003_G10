@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import joblib
-from sklearn.preprocessing import StandardScaler
 
 # Load the trained model
 model = joblib.load('rf_model.pkl')
@@ -48,8 +47,24 @@ user_input_scaled = scaler.transform(user_input)
 
 # Make predictions
 prediction = model.predict(user_input_scaled)
+prediction_proba = model.predict_proba(user_input_scaled)
 
 # Display the predictions
 st.subheader('Prediction:')
 heart_disease = ['No', 'Yes']
 st.write(heart_disease[prediction[0]])
+
+# Display prediction probability
+st.subheader('Prediction Probability:')
+st.write(f'No: {prediction_proba[0][0]*100:.2f}%')
+st.write(f'Yes: {prediction_proba[0][1]*100:.2f}%')
+
+# Display a bar chart for prediction probabilities
+st.subheader('Prediction Probability Chart:')
+st.bar_chart(prediction_proba[0])
+
+# Explanation of results
+if prediction[0] == 1:
+    st.write("The model predicts that there is a high chance of heart disease.")
+else:
+    st.write("The model predicts that there is a low chance of heart disease. Keep maintaining a healthy lifestyle!")
