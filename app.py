@@ -4,6 +4,8 @@ import joblib
 
 # Load the trained model
 model = joblib.load('rf_model.pkl')
+# Load your dataset
+dataset = pd.read_csv('cleaned_dataset.csv')
 
 def get_user_input():
     # Create user input fields
@@ -49,22 +51,32 @@ user_input_scaled = scaler.transform(user_input)
 prediction = model.predict(user_input_scaled)
 prediction_proba = model.predict_proba(user_input_scaled)
 
-# Display the predictions
-st.subheader('Prediction:')
-heart_disease = ['No', 'Yes']
-st.write(heart_disease[prediction[0]])
+# GUI
+# Create tabs
+tab1, tab2 = st.tabs(['Predictions', 'Dataset'])
 
-# Display prediction probability
-st.subheader('Prediction Probability:')
-st.write(f'No: {prediction_proba[0][0]*100:.2f}%')
-st.write(f'Yes: {prediction_proba[0][1]*100:.2f}%')
+with tab1:
+    # Display the predictions
+    st.subheader('Prediction:')
+    heart_disease = ['No', 'Yes']
+    st.write(heart_disease[prediction[0]])
 
-# Display a bar chart for prediction probabilities
-st.subheader('Prediction Probability Chart:')
-st.bar_chart(prediction_proba[0])
+    # Display prediction probability
+    st.subheader('Prediction Probability:')
+    st.write(f'No: {prediction_proba[0][0]*100:.2f}%')
+    st.write(f'Yes: {prediction_proba[0][1]*100:.2f}%')
 
-# Explanation of results
-if prediction[0] == 1:
-    st.write("The model predicts that there is a high chance of heart disease.")
-else:
-    st.write("The model predicts that there is a low chance of heart disease. Keep maintaining a healthy lifestyle!")
+    # Display a bar chart for prediction probabilities
+    st.subheader('Prediction Probability Chart:')
+    st.bar_chart(prediction_proba[0])
+
+    # Explanation of results
+    if prediction[0] == 1:
+        st.write("The model predicts that there is a high chance of heart disease.")
+    else:
+        st.write("The model predicts that there is a low chance of heart disease. Keep maintaining a healthy lifestyle!")
+
+with tab2:
+    # Display the dataset
+    st.subheader('Dataset')
+    st.dataframe(dataset)
